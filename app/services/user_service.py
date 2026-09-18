@@ -21,3 +21,7 @@ def create_user(db: Session, user_data: UserCreate) -> User:
     db.refresh(user)
 
     return user
+
+
+def get_users(db: Session) -> list[User]:
+    return db.query(User).all()
