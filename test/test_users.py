@@ -106,3 +106,16 @@ def test_register_with_password_too_long():
     )
 
     assert response.status_code == 422
+
+def test_register_duplicate_username(client, login_test_user):
+    response = client.post(
+        "/users/register",
+        json={
+            "username": "login_test_user",
+            "email": "different_email@example.com",
+            "password": "TestPassword123!",
+        },
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Username or email already exists"

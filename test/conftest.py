@@ -2,11 +2,14 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import NullPool
 
 from app.core.config import settings
+from app.core.security import hash_password
 from app.database.database import Base
 from app.database.dependencies import get_db
 from app.main import app
+from app.models.user import User
 
 
 test_engine = create_engine(
@@ -38,6 +41,33 @@ def db_session():
         yield db
     finally:
         db.close()
+
+
+@pytest.fixture
+def login_test_user(db_session):
+    existing_user = (
+        db_session.query(User)
+        .filter(User.username == "login_test_user")
+        .first()
+    )
+
+    if existing_user:
+        db_session.delete(existing_user)
+        db_session.commit()
+
+    user = User(
+        username="login_test_user",
+        email="login_test@example.com",
+        hashed_password=hash_password("TestPassword123!"),
+        role="user",
+        is_active=True,
+    )
+
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    return user
 
 
 @pytest.fixture

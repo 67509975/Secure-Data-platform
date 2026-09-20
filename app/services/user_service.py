@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password
@@ -17,8 +18,13 @@ def create_user(db: Session, user_data: UserCreate) -> User:
     )
 
     db.add(user)
-    db.commit()
-    db.refresh(user)
+
+    try:
+        db.commit()
+        db.refresh(user)
+    except IntegrityError:
+        db.rollback()
+        raise ValueError("Username or email already exists")
 
     return user
 
