@@ -1,9 +1,11 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
 
 class UserCreate(BaseModel):
-    username:str =Field(min_length=3, max_length=50)
-    email:EmailStr
+    username: str = Field(min_length=3, max_length=50)
+    email: EmailStr
     password: str = Field(min_length=8, max_length=128)
+
 
 class UserResponse(BaseModel):
     id: int
@@ -11,5 +13,4 @@ class UserResponse(BaseModel):
     email: str
     is_active: bool
 
-    class Config:
-        from_attributes =True
+    model_config = ConfigDict(from_attributes=True)

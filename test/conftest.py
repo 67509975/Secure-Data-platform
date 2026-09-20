@@ -1,8 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import NullPool, create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import NullPool
 
 from app.core.config import settings
 from app.core.security import hash_password
@@ -12,9 +11,11 @@ from app.main import app
 from app.models.user import User
 
 
+
 test_engine = create_engine(
     settings.test_database_url,
     pool_pre_ping=True,
+    poolclass=NullPool,
 )
 
 TestingSessionLocal = sessionmaker(
