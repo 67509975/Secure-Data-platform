@@ -16,8 +16,7 @@ def test_health_check():
     assert data["status"] == "healthy"
     assert data["environment"] == "development"
 
-
-def test_health_response_structure():
+def test_health_response_structure(client):
     response = client.get("/health")
 
     assert response.status_code == 200

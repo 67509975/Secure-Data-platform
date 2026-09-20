@@ -84,3 +84,29 @@ def client(db_session):
         yield test_client
 
     app.dependency_overrides.clear()
+
+@pytest.fixture
+def admin_test_user(db_session):
+    existing_user = (
+        db_session.query(User)
+        .filter(User.username == "admin_test_user")
+        .first()
+    )
+
+    if existing_user:
+        db_session.delete(existing_user)
+        db_session.commit()
+
+    user = User(
+        username="admin_test_user",
+        email="admin_test@example.com",
+        hashed_password=hash_password("AdminPassword123!"),
+        role="admin",
+        is_active=True,
+    )
+
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    return user

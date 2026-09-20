@@ -1,4 +1,12 @@
 from fastapi.testclient import TestClient
+from datetime import timedelta
+
+from app.core.security import create_access_token
+from app.main import app
+
+
+client = TestClient(app)
+from fastapi.testclient import TestClient
 
 from app.main import app
 
@@ -98,6 +106,21 @@ def test_wrong_authorization_scheme_is_rejected():
         "/users/me",
         headers={
             "Authorization": "Token some-token",
+        },
+    )
+
+    assert response.status_code == 401
+
+def test_expired_jwt_is_rejected(client):
+    token = create_access_token(
+        data={"sub": "1"},
+        expires_delta=timedelta(seconds=-1),
+    )
+
+    response = client.get(
+        "/users/me",
+        headers={
+            "Authorization": f"Bearer {token}",
         },
     )
 

@@ -84,3 +84,30 @@ def client(db_session):
         yield test_client
 
     app.dependency_overrides.clear()
+
+def test_users_me_does_not_expose_password(client, login_test_user):
+    login_response = client.post(
+        "/auth/login",
+        data={
+            "username": "login_test_user",
+            "password": "TestPassword123!",
+        },
+    )
+
+    assert login_response.status_code == 200
+
+    token = login_response.json()["access_token"]
+
+    response = client.get(
+        "/users/me",
+        headers={
+            "Authorization": f"Bearer {token}",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "password" not in data
+    assert "hashed_password" not in data
