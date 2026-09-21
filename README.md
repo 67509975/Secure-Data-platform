@@ -1,8 +1,11 @@
-# 🔐 Secure Data Platform
+# Secure Data Platform
 
-A production-oriented data platform built with **Python and FastAPI**, combining secure REST API development, data engineering, and DevSecOps practices.
+A production-oriented data platform built with **Python and FastAPI**, with a focus on **secure REST API development, application security, and DevSecOps practices**.
 
-The project is designed to demonstrate how data can be **securely collected, validated, processed, stored, and exposed through APIs** using modern software engineering and security principles.
+The project demonstrates how data can be securely **collected, validated, processed, stored, and exposed through APIs**, while applying security principles throughout the software development lifecycle.
+
+> **Status:** Completed
+
 
 ---
 
@@ -10,169 +13,410 @@ The project is designed to demonstrate how data can be **securely collected, val
 
 The goal of this project is to build a secure, production-oriented data platform from the ground up.
 
-The platform will progressively demonstrate:
+The platform is being developed incrementally, beginning with a secure REST API foundation and expanding toward broader data engineering and cloud capabilities.
+
+The project focuses on:
 
 * Secure REST API development
 * Authentication and authorization
+* Role-based access control
 * Data validation and protection
 * Database design and management
+* Automated testing
+* Security testing
+* Dependency vulnerability management
+* CI/CD and DevSecOps
 * Data ingestion and transformation
 * Data quality and reliability
 * Cloud infrastructure
-* CI/CD and DevSecOps
 * Security monitoring and auditing
 
-Security will be incorporated throughout the platform rather than treated as a separate component.
+Security is incorporated throughout the platform rather than treated as a separate component.
 
 ---
 
-## 🏗️ Planned Architecture
+## 🏗️ Current Architecture
+
+The current implementation focuses on the secure API and database layer:
 
 ```text
-Client
-   │
-   ▼
-┌─────────────────────┐
-│      FastAPI        │
-│     REST API        │
-└──────────┬──────────┘
-           │
-      Security Layer
-           │
-           ▼
-┌─────────────────────┐
-│     PostgreSQL      │
-│   Operational Data  │
-└──────────┬──────────┘
-           │
-      Data Ingestion
-           │
-           ▼
-┌─────────────────────┐
-│    ETL / ELT        │
-│ Validation &         │
-│ Transformation       │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│   Data Warehouse    │
-└──────────┬──────────┘
-           │
-           ▼
-      Analytics / BI
-```
-
-Security controls will span the entire architecture.
+                    Client
+                       │
+                       ▼
+              ┌─────────────────┐
+              │     FastAPI     │
+              │    REST API     │
+              └────────┬────────┘
+                       │
+              ┌────────▼────────┐
+              │   Security      │
+              │ Authentication  │
+              │ Authorization   │
+              │ Validation      │
+              └────────┬────────┘
+                       │
+              ┌────────▼────────┐
+              │   SQLAlchemy    │
+              │      ORM        │
+              └────────┬────────┘
+                       │
+              ┌────────▼────────┐
+              │   PostgreSQL    │
+              │ Operational Data│
+              └─────────────────┘
 
 ---
 
-## 🔐 Security
+# 🔐 Security
 
-Security practices will include:
+Security is a core design consideration of the platform.
 
-* Secure authentication
-* Role-based access control (RBAC)
-* Password hashing
-* Input validation
-* Secure error handling
-* Secrets management
-* Least-privilege access
-* Encryption in transit
-* Security logging and auditing
-* Dependency vulnerability scanning
-* Container security
-* CI/CD security testing
+### Authentication
 
-Security practices will be implemented progressively as the platform develops.
+The API implements JWT-based authentication with:
 
----
+* Secure password hashing
+* Login authentication
+* JWT access tokens
+* Protected API endpoints
+* Authentication failure handling
+* Inactive-user checks
 
-## ⚙️ Data Engineering
+### Authorization
 
-The platform will progressively incorporate:
+Role-based access control (RBAC) is implemented to restrict administrative functionality.
 
-* Data ingestion
-* ETL / ELT pipelines
-* Data validation
-* Data transformation
-* Data quality checks
-* Relational data modelling
-* Data warehousing
-* Pipeline monitoring
+The API distinguishes between normal users and administrators and prevents unauthorized users from accessing administrative endpoints.
 
----
+### Input Validation
 
-## 🛠️ Technology Stack
+Request data is validated using Pydantic schemas, including:
 
-### Current
+* Username validation
+* Password requirements
+* Email validation
+* Required fields
+* Response validation
 
-* Python
-* FastAPI
-* Uvicorn
-* Git
-* GitHub
+### Database Security
 
-### Planned
+The application uses:
 
 * PostgreSQL
 * SQLAlchemy
-* Docker
-* Pytest
-* GitHub Actions
-* Azure
-* ETL / ELT tooling
-* Data warehouse technologies
+* Database sessions
+* Unique constraints
+* Environment-based database configuration
+* Separate test database configuration
+
+### Additional Security Practices
+
+The project incorporates:
+
+* Least-privilege principles
+* Secure error handling
+* Secrets management
+* Dependency vulnerability scanning
+* Security testing
+* CI/CD security checks
+* Threat modelling
+* Penetration testing
+* Container security
 
 ---
 
-## 📂 Project Structure
+# 🧪 Security & Automated Testing
+
+Security is integrated into the development workflow through automated testing and security scanning.
+
+### Pytest
+
+The project contains automated tests covering areas including:
+
+* API health
+* User registration
+* Authentication
+* JWT-protected endpoints
+* User access
+* Administrative access
+* Role-based authorization
+* Invalid credentials
+* Validation failures
+* Duplicate users
+* Inactive users
+* Security-related API behaviour
+
+Run the tests with:
+
+```bash
+python -m pytest -q
+```
+
+### Bandit
+
+Bandit is used for static security analysis of the Python application:
+
+```bash
+bandit -r app
+```
+
+### pip-audit
+
+Dependency vulnerabilities are checked using:
+
+```bash
+pip-audit
+```
+
+### Dependency Verification
+
+Python dependency consistency can be checked with:
+
+```bash
+python -m pip check
+```
+
+---
+
+# ⚙️ DevSecOps / CI/CD
+
+The project uses GitLab CI/CD to automate testing and security checks.
+
+The current pipeline contains:
+
+```text
+Test
+  │
+  ▼
+Security
+  ├── Bandit
+  └── pip-audit
+```
+
+The pipeline automatically:
+
+1. Sets up the Python environment
+2. Installs project dependencies
+3. Runs the automated test suite
+4. Performs static security analysis
+5. Audits Python dependencies
+
+Current `.gitlab-ci.yml` stages:
+
+```yaml
+stages:
+  - test
+  - security
+```
+
+This demonstrates a **shift-left security approach**, integrating security checks into the development and CI/CD process.
+
+---
+
+# 🛡️ Threat Modelling & Security Documentation
+
+Security risks are considered during the design and development of the platform.
+
+The project includes documentation covering:
+
+* Threat modelling
+* Authentication threats
+* Authorization risks
+* Credential protection
+* Input validation
+* API security
+* Database security
+* Dependency vulnerabilities
+* Security testing
+
+Security documentation is maintained under:
+
+```text
+security/
+```
+
+---
+
+# 📬 API Testing
+
+Postman is used to test the REST API and demonstrate its security controls.
+
+The API workflow includes:
+
+```text
+Register User
+     │
+     ▼
+Login
+     │
+     ▼
+Receive JWT
+     │
+     ▼
+Access Protected Endpoint
+     │
+     ▼
+Attempt Unauthorized Admin Access
+     │
+     ▼
+403 Forbidden
+     │
+     ▼
+Authenticate as Admin
+     │
+     ▼
+Access Admin Endpoint
+```
+
+FastAPI's interactive documentation is also available through Swagger UI when the application is running:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+# 🛠️ Technology Stack
+
+## Current
+
+* Python 3.12
+* FastAPI
+* Uvicorn
+* PostgreSQL
+* SQLAlchemy
+* Pydantic
+* JWT
+* pwdlib
+* Pytest
+* Bandit
+* pip-audit
+* Git
+* GitHub
+* GitLab CI/CD
+* Postman
+
+## Planned
+
+* Docker
+* Cloud infrastructure
+* Azure
+* ETL / ELT tooling
+* Data warehouse technologies
+* Analytics / BI
+* Security monitoring and observability
+
+---
+
+# 📂 Project Structure
 
 ```text
 secure-data-platform/
 │
 ├── app/
-│   ├── api/
 │   ├── core/
+│   │   ├── config.py
+│   │   └── security.py
+│   │
 │   ├── database/
+│   │   └── dependencies.py
+│   │
 │   ├── models/
+│   │   └── user.py
+│   │
+│   ├── routers/
+│   │   ├── auth.py
+│   │   ├── users.py
+│   │   └── admin.py
+│   │
 │   ├── schemas/
-│   └── services/
+│   │   ├── auth.py
+│   │   └── user.py
+│   │
+│   └── main.py
 │
-├── tests/
-├── docs/
+├── security/
+│   ├── threat-model.md
+│   └── penetration-test-report.md
+│
+├── test/
+│   ├── conftest.py
+│   ├── test_health.py
+│   ├── test_security.py
+│   ├── test_users.py
+│   └── test_admin.py
+│
+├── .gitlab-ci.yml
+├── Dockerfile
+├── .dockerignore
 ├── requirements.txt
-├── .gitignore
+├── requirements-dev.txt
 └── README.md
 ```
 
-The structure will evolve as new platform capabilities are introduced.
-
 ---
 
-## 🚧 Project Status
+# 🚧 Project Status
 
 **Status: In Development**
 
-The project is being built incrementally, starting with the secure REST API foundation and progressively expanding into a complete data engineering platform.
+The project is being developed incrementally.
+
+### Current milestone
+
+The current implementation establishes the secure REST API foundation, including:
+
+* FastAPI REST API
+* PostgreSQL database
+* SQLAlchemy ORM
+* User registration
+* Password hashing
+* JWT authentication
+* Role-based access control
+* Input validation
+* Automated testing
+* Security testing
+* Threat modelling
+* Dependency security scanning
+* GitLab CI/CD security checks
+
+### Next development areas
+
+The platform will progressively expand into:
+
+* Containerisation
+* Cloud deployment
+* Data ingestion
+* ETL / ELT pipelines
+* Data quality controls
+* Data warehousing
+* Analytics
+* Monitoring and auditing
 
 ---
 
-## 📚 Learning Objectives
+# 📚 Learning Objectives
 
-This project is intended to demonstrate practical understanding of:
+This project is intended to demonstrate practical experience in:
 
 * Backend development
-* API architecture
+* REST API architecture
 * Application security
+* Authentication and authorization
 * Database engineering
+* Secure software development
+* Automated testing
+* Security testing
+* DevSecOps
+* CI/CD
 * Data engineering
 * Cloud engineering
-* DevSecOps
 * Production-oriented software development
 
 ---
 
-## 👤 Author
+# 👤 Author
 
 **Tshegofatso Khoza**
+
+Software Engineering | Security Engineering | DevSecOps
